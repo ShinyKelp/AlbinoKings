@@ -16,17 +16,19 @@ using UnityEngine;
 
 namespace AlbinoKings
 {
-    [BepInPlugin("ShinyKelp.AlbinoKings", "Albino Kings", "1.0.0")]
+    [BepInPlugin("ShinyKelp.AlbinoKings", "Albino Kings", "1.1.0")]
     public class AlbinoKingsMod : BaseUnityPlugin
     {
         private void OnEnable()
         {
-            On.RainWorld.PreModsInit += RainWorld_PreModsInit;
             On.RainWorld.OnModsInit += RainWorldOnOnModsInit;
-            On.RainWorld.PostModsInit += RainWorld_PostModsInit;
+            //On.RainWorld.PreModsInit += RainWorld_PreModsInit;
+            //On.RainWorld.PostModsInit += RainWorld_PostModsInit;
         }
 
         #region Hailstorm hooks
+        /*
+        private bool hailstormLasers, hailstormAI, hailstormAll, hasHailstorm;
 
         private void RainWorld_PreModsInit(On.RainWorld.orig_PreModsInit orig, RainWorld self)
         {
@@ -55,7 +57,7 @@ namespace AlbinoKings
         }
         private void Vulture_ctor_Pre(On.Vulture.orig_ctor orig, Vulture self, AbstractCreature abstractCreature, World world)
         {
-            if (hasHailstorm && abstractCreature.creatureTemplate.type == MoreSlugcats.MoreSlugcatsEnums.CreatureTemplateType.MirosVulture && abstractCreature.superSizeMe)
+            if (hasHailstorm && abstractCreature.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.MirosVulture && abstractCreature.superSizeMe)
                 SetHailstormVariables();
 
             orig(self, abstractCreature, world);
@@ -65,7 +67,7 @@ namespace AlbinoKings
         {
             orig(self, abstractCreature, world);
 
-            if (hasHailstorm && abstractCreature.creatureTemplate.type == MoreSlugcats.MoreSlugcatsEnums.CreatureTemplateType.MirosVulture && abstractCreature.superSizeMe)
+            if (hasHailstorm && abstractCreature.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.MirosVulture && abstractCreature.superSizeMe)
                 ReturnHailstormVariables();
         }
 
@@ -102,14 +104,13 @@ namespace AlbinoKings
             hailstormAI = Hailstorm.HSRemix.ScissorhawkEagerBirds.Value;
             hailstormAll = Hailstorm.HSRemix.AuroricMirosEverywhere.Value;
         }
-
+        */
         #endregion
 
-        private bool hailstormLasers, hailstormAI, hailstormAll;
 
         private bool IsInit;
         AlbinoKingsOptions options;
-        bool hasApexUp, hasHailstorm;
+        bool hasApexUp;
 
 
 
@@ -120,13 +121,16 @@ namespace AlbinoKings
             {
                 if (IsInit) return;
 
-                hasApexUp = hasHailstorm = false;
+                hasApexUp = false;// hasHailstorm = false;
                 foreach(ModManager.Mod mod in ModManager.ActiveMods)
                 {
-                    if (mod.id == "theincandescent")
-                        hasHailstorm = true;
+                    //if (mod.id == "theincandescent")
+                        //hasHailstorm = true;
                     if (mod.id == "ShinyKelp.ApexUpYourSpawns")
+                    {
                         hasApexUp = true;
+                        break;
+                    }
                 }
 
                 //Your hooks go here
@@ -157,14 +161,11 @@ namespace AlbinoKings
             if(world != null && world.game != null)
             {
                 if(self.creatureTemplate.IsVulture ||
-                    self.creatureTemplate.type == MoreSlugcats.MoreSlugcatsEnums.CreatureTemplateType.MirosVulture)
+                    self.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.MirosVulture)
                 {
                     if (!self.superSizeMe && !hasApexUp && AlbinoKingsOptions.MoreAlbinos.Value)
                     {
-                        if(world.game.IsArenaSession)
-                            self.superSizeMe = UnityEngine.Random.value > 0.9f;
-                        else
-                            self.superSizeMe = UnityEngine.Random.value > 0.95f;
+                        self.superSizeMe = UnityEngine.Random.value < (float)AlbinoKingsOptions.AlbinoChance.Value / 10f;
                     }
                 }
             }
@@ -173,8 +174,10 @@ namespace AlbinoKings
         private void GameSession_ctor(On.GameSession.orig_ctor orig, GameSession self, RainWorldGame game)
         {
             orig(self, game);
+            /*
             if (hasHailstorm)
                 CopyHailstormVariables();
+            */
         }
 
         private bool VultureAI_OnlyHurtDontGrab(On.VultureAI.orig_OnlyHurtDontGrab orig, VultureAI self, PhysicalObject testObj)

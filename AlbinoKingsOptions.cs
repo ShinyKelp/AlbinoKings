@@ -27,10 +27,12 @@ namespace AlbinoKings
 
         public Configurable<bool> allStrong;// = instance.config.Bind<float>("sympathy", 0f, new ConfigAcceptableRange<float>(0f, 10f));
         public Configurable<bool> moreAlbinos;// = instance.config.Bind<float>("sympathy", 0f, new ConfigAcceptableRange<float>(0f, 10f));
-        
+        public Configurable<float> albinoChance;// = instance.config.Bind<float>("VultureMaskStun", 1.8f, new ConfigAcceptableRange<float>(0f, 10f));
+
 
         public static Configurable<bool> AllStrong;
         public static Configurable<bool> MoreAlbinos;
+        public static Configurable<float> AlbinoChance;
 
         public AlbinoKingsOptions()
         {
@@ -38,6 +40,8 @@ namespace AlbinoKings
             AllStrong = allStrong;
             moreAlbinos = config.Bind<bool>("moreAlbinos", true);
             MoreAlbinos = moreAlbinos;
+            albinoChance = config.Bind<float>("albinoChance", 1f, new ConfigAcceptableRange<float>(0f, 10f));
+            AlbinoChance = albinoChance;
         }
 
         private UIelement[] UIArrPlayerOptions;
@@ -49,15 +53,20 @@ namespace AlbinoKings
 
             UIArrPlayerOptions = new UIelement[]
             {
-                new OpLabel(15f, 445f, "All powerful"),
-                new OpCheckBox(allStrong, 100f, 442f){
+                new OpLabel(15f, 445f, "All kings are powerful"),
+                new OpCheckBox(allStrong, 150f, 442f){
                     description = "All king vultures will be stronger, regardless of albino."
                 },
 
                 new OpLabel(15f, 405f, "More albinos"),
-                new OpCheckBox(moreAlbinos, 100f, 402f){
+                new OpCheckBox(moreAlbinos, 150f, 402f){
                     description = "Albino vultures will be more common."
-                }
+                },
+                new OpFloatSlider(albinoChance,new Vector2(20f, 360f), 200)
+                {
+                    description = "Albino king spawn chance (10 = 100%)."
+                },
+
             };
 
             opTab.AddItems(UIArrPlayerOptions);
